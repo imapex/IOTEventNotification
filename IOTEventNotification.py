@@ -1,5 +1,6 @@
 #!/usr/bin python
 import time
+import os
 #import PrintAlertClass
 #import GenericSensorClass
 import SparkRoomAlertClass
@@ -16,16 +17,29 @@ import WeatherUndergroundSensorClass
 # It is a very simple function that uses a time function to sleep between polling intervals.
 #
 #####################################################
+# Get hold of the configuration file (package_config.ini)
+moduledir = os.path.abspath(os.path.dirname(__file__))
+BASEDIR = os.getenv("CAF_APP_PATH", moduledir)
+
+# If we are not running with CAF, use the BASEDIR to get cfg file
+tcfg = os.path.join(BASEDIR, "package_config.ini")
+
+CONFIG_FILE = os.getenv("CAF_APP_CONFIG_FILE", tcfg)
+
+from ConfigParser import SafeConfigParser
+cfg = SafeConfigParser()
+cfg.read(CONFIG_FILE)
 
 
 # This defines the alert object that will be used to notify the user
 #AlertUser = PrintAlertClass.PrintAlertClass()
-AlertUser =  SparkRoomAlertClass.SparkRoomAlertClass()
+AlertUser = SparkRoomAlertClass.SparkRoomAlertClass(cfg)
 
 # This defines the sensor object that will be used to retrieve data from the sensor
 #Sensor = GenericSensorClass.GenericSensorClass()
-Sensor = WeatherUndergroundSensorClass.WeatherUndergroundSensorClass()
-Sensor.logging=True
+key = cfg.get("wunderground", "api_key")
+Sensor = WeatherUndergroundSensorClass.WeatherUndergroundSensorClass(key)
+Sensor.logging = True
 
 # Let's loop forever
 while True:

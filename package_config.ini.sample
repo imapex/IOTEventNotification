@@ -1,0 +1,12 @@
+[spark]
+url: https://api.ciscospark.com
+token: <<token>>
+room_id: <<room_id>>
+
+[wunderground]
+api_key: <<wunderground api key>>
+[logging]
+# DEBUG:10, INFO: 20, WARNING: 30, ERROR: 40, CRITICAL: 50, NOTSET: 0
+log_level: 10
+# Enable/disable logging to stdout
+console: yes

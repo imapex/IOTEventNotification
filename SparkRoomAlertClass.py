@@ -9,7 +9,7 @@
 import requests
 import json
 import logging
-
+import os
 import GenericAlertClass
 
 def _fix_at(at):
@@ -33,15 +33,15 @@ def post_message(at, roomId, text, toPersonId='', toPersonEmail=''):
 
 class SparkRoomAlertClass(GenericAlertClass.GenericAlertClass):
 
-    def __init__(self):
-
+    def __init__(self, cfg):
         GenericAlertClass.GenericAlertClass.__init__(self)
-
-        self.sparkToken = ""
-        self.roomID = ""
+        self.cfg = cfg
+        self.sparkToken =  cfg.get("spark", "token")
+        self.roomID = cfg.get("spark", "room_id")
 
         if self.logging:
             logging.warning("DEBUG: Constructor for PrintAlertClass")
+
 
     def Alert(self,alertdata):
         post_message(self.sparkToken, self.roomID, alertdata)
