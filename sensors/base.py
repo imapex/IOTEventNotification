@@ -14,6 +14,9 @@ class GenericSensorClass(object):
         self.logging = False
         self.alerts = list()
 
+        self.totalcount = 0
+        self.sensorcount = 0
+
     def add_alert(self, alert):
         """
         adds an alert object to the sensor

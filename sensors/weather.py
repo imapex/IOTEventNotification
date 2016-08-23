@@ -16,6 +16,8 @@ class WeatherUndergroundSensor(GenericSensorClass):
 
     def read(self):
 
+        self.totalcount += 1
+
         base_url = "http://api.wunderground.com:80/api/{}".format(self.apikey)
         endpoint = "/conditions/q/{}.json".format(self.zipcode)
 
@@ -48,6 +50,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
             logging.warning("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:
+            self.sensorcount += 1
             return True
         else:
             return False

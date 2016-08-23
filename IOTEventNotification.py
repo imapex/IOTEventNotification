@@ -4,6 +4,8 @@ import time
 from alerts.spark import SparkRoomAlert
 from alerts.local import PrintAlertClass
 from sensors.weather import WeatherUndergroundSensor
+from sensors.simsensor import SimulatedSensor
+from sensors.base import GenericSensorClass
 from ConfigParser import SafeConfigParser
 
 """
@@ -32,8 +34,10 @@ cfg.read(CONFIG_FILE)
 
 # define the sensor object that will be used to retrieve data from the sensor
 
-key = cfg.get("wunderground", "api_key")
-sensor = WeatherUndergroundSensor(key)
+#key = cfg.get("wunderground", "api_key")
+#sensor = WeatherUndergroundSensor(key)
+#sensor.logging = True
+sensor = SimulatedSensor()
 sensor.logging = True
 
 # Define the alerts we want to use
@@ -44,6 +48,8 @@ screen = PrintAlertClass()
 # add alerts to sensor
 sensor.add_alert(spark)
 sensor.add_alert(screen)
+
+sensor.send_alerts(time.strftime("%b %d %Y, %H:%M:%S ", time.gmtime()) + "IOTEventNotification starting..." )
 
 # Let's loop forever
 while True:
@@ -57,11 +63,12 @@ while True:
     Let's compare the data that was retrieved with the
     value to determine the appropriate action
     """
-    if sensor.compare(100):
+    if sensor.compare(5):
 
         sensor.send_alerts(currentdate + "ALERT: A new car just appeared at "
                                          "the drive up bank location.   "
-                                         "Please Service ASAP")
+                                         "Please Service ASAP!!! " + " (Sensor Hits/Sensor Reads)  ("+
+                                          str(sensor.sensorcount)+"/"+ str(sensor.totalcount)+")")
     else:
         sensor.send_alerts(currentdate+"Drive up is currently empty")
 
