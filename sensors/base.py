@@ -1,6 +1,7 @@
 #
 # This class implements a very simple sensor mechanism
 #
+# By default this class does nothing, but can be used for future functionality
 #
 # This generic sensor class can be used as the basis for
 # other more complex clases by inheriting from this base class
@@ -14,8 +15,8 @@ class GenericSensorClass(object):
         self._log = False
         self.alerts = list()
 
-        self.totalcount = 0
-        self.sensorcount = 0
+        self._totalcount = 0
+        self._sensorcount = 0
 
     @property
     def log(self):
@@ -24,6 +25,23 @@ class GenericSensorClass(object):
     @log.setter
     def log(self, value):
         self._log = value
+
+    @property
+    def totalcount(self):
+        return self._totalcount
+
+    @totalcount.setter
+    def totalcount(self, value):
+        self._totalcount = value
+
+    @property
+    def sensorcount(self):
+        return self._sensorcount
+
+    @sensorcount.setter
+    def sensorcount(self, value):
+        self._sensorcount = value
+
 
 
     def add_alert(self, alert):
@@ -45,6 +63,7 @@ class GenericSensorClass(object):
 
         :return:
         """
+        self._totalcount += 1
 
         pass
 

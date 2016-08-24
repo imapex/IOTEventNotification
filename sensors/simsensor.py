@@ -14,10 +14,15 @@ class SimulatedSensor(GenericSensorClass):
 
     def read(self):
 
+        # Execute any method in the base class prior to this method
+        super(SimulatedSensor,self).read()
+
         self.data = random.randint(1, 10)
-        self.totalcount += 1
+
         if self._log:
-            logging.warning("Generated a number:" + str(self.data))
+            logging.warning("Sensor read number: "+ str(self._totalcount) + " Data returned: "+str(self.data))
+
+
 
         return
 
@@ -35,7 +40,7 @@ class SimulatedSensor(GenericSensorClass):
             logging.warning("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:
-            self.sensorcount += 1
+            self._sensorcount += 1
             return True
         else:
             return False

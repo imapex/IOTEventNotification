@@ -15,7 +15,8 @@ class WeatherUndergroundSensor(GenericSensorClass):
 
     def read(self):
 
-        self.totalcount += 1
+        # Execute any method in the base class prior to this method
+        super(WeatherUndergroundSensor,self).read()
 
         base_url = "http://api.wunderground.com:80/api/{}".format(self.apikey)
         endpoint = "/conditions/q/{}.json".format(self.zipcode)
@@ -31,7 +32,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
         self.data = json_string['current_observation']['temp_f']
 
         if self._log:
-            logging.warning("Returned weather:" + str(self.data))
+            logging.warning("Sensor read number: "+ str(self._totalcount) + " Data returned: "+str(self.data))
 
         return self.data
 
@@ -49,7 +50,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
             logging.warning("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:
-            self.sensorcount += 1
+            self._sensorcount += 1
             return True
         else:
             return False
