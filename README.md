@@ -16,11 +16,12 @@ Loop forever
 	If True, alert the user
 	Sleep for a period of time
 ```
+The core module is IOTEventNotification.py
 
 ##Details of Generic Functions
 There are two types of classes that are implemented.   They are a GenericAlertClass and a GenericSensorClass.    These classes perform the actual function.
 
-**GenericAlertClass** - This class implements the generic alerting mechanism.   The default it does not, but implements local variables to maintain state.   However, the function of it is to use it as a foundation for other classes by using inheritance.
+**GenericAlertClass** - This class implements the generic alerting mechanism.   It provides no function directly, but implements local variables to maintain state.   However, the function of it is to use it as a foundation for other classes by using inheritance.
 
 The base clase only implements one method:
 
@@ -28,14 +29,17 @@ The base clase only implements one method:
 
 **GenericSensorClass** - This class implements the generic sensor mechanism.  The default behavior implements a simulated sensor by using a random number generator.   
 
-* **GetDataFromSensor** - This class retrieves data from a sensor.   The data returned from the sensor should be stored in the data variable within theclass so that it can be used for other methods
-* **CompareDataFromSensor(value)** - This class compares the data that was received from the sensor to the value paramter.   It will return a boolean value.
+* **read** - This class retrieves data from a sensor.   The data returned from the sensor should be stored in the data variable within theclass so that it can be used for other methods
+* **compare(value)** - This class compares the data that was received from the sensor to the value paramter.   It will return a boolean value.
 
 ##Code modules provided
 
 * **PrintAlertClass** - This AlertClass will print the data to the screen
 * **SparkRoomAlertClass** - This AlertClass will print the data a Cisco Spark Room.   
-* **WeatherUndergroundSensorClass** - This SensorClass will receive data from the weather underground API
+* **SimulatedSensor** - This SensorClass will implement a basic sensor simulation using a random number generator.   
+* **WeatherUndergroundSensor** - This SensorClass will receive data from the weather underground API
+
+
 
 
 
