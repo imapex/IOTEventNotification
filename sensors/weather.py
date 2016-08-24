@@ -5,12 +5,12 @@ from sensors.base import GenericSensorClass
 
 class WeatherUndergroundSensor(GenericSensorClass):
 
-    def __init__(self, api_key):
+    def __init__(self, api_key, zip):
 
         self.data = 0
         self.logging = False
 
-        self.zipcode = "16066"
+        self.zipcode = zip
         self.apikey = api_key
         super(WeatherUndergroundSensor, self).__init__()
 

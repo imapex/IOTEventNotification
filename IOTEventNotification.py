@@ -34,19 +34,26 @@ cfg.read(CONFIG_FILE)
 
 # define the sensor object that will be used to retrieve data from the sensor
 
+# This snippet of code will instantiate the Weather Underground Sensor
+
 #key = cfg.get("wunderground", "api_key")
-#sensor = WeatherUndergroundSensor(key)
+#zip = cfg.get("wunderground", "zipcode")
+
+#sensor = WeatherUndergroundSensor(key,zip)
 #sensor.logging = True
+
+
+# This snippet of code will instantiate the Simulated Sensor
 sensor = SimulatedSensor()
 sensor.logging = True
 
 # Define the alerts we want to use
 
-spark = SparkRoomAlert(cfg)
+#spark = SparkRoomAlert(cfg)
 screen = PrintAlertClass()
 
 # add alerts to sensor
-sensor.add_alert(spark)
+#sensor.add_alert(spark)
 sensor.add_alert(screen)
 
 sensor.send_alerts(time.strftime("%b %d %Y, %H:%M:%S ", time.gmtime()) + "IOTEventNotification starting..." )
