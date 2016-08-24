@@ -11,7 +11,7 @@ class PrintAlertClass(GenericAlertClass):
 
         super(PrintAlertClass, self).__init__()
 
-        if self.logging:
+        if self.log:
             logging.warning("DEBUG: Constructor for PrintAlertClass")
 
     def trigger(self, alertdata):

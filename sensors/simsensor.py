@@ -7,7 +7,7 @@ class SimulatedSensor(GenericSensorClass):
     def __init__(self):
 
         self.data = 0
-        self.logging = False
+#        self.logging = False
 
         super(SimulatedSensor, self).__init__()
 
@@ -16,7 +16,7 @@ class SimulatedSensor(GenericSensorClass):
 
         self.data = random.randint(1, 10)
         self.totalcount += 1
-        if self.logging:
+        if self._log:
             logging.warning("Generated a number:" + str(self.data))
 
         return
@@ -31,7 +31,7 @@ class SimulatedSensor(GenericSensorClass):
         :return: bool result of comparison
         """
 
-        if self.logging:
+        if self._log:
             logging.warning("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:

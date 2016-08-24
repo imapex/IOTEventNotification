@@ -15,7 +15,7 @@ class SparkRoomAlert(GenericAlertClass):
         self.sparkToken = cfg.get("spark", "token")
         self.roomId = cfg.get("spark", "room_id")
         super(SparkRoomAlert, self).__init__()
-        if self.logging:
+        if self.log:
             logging.warning("DEBUG: Constructor for PrintAlertClass")
 
     def post_message(self, text, toPersonId='', toPersonEmail=''):

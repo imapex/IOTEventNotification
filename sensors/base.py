@@ -11,11 +11,20 @@ class GenericSensorClass(object):
 
     def __init__(self):
         self.data = 0
-        self.logging = False
+        self._log = False
         self.alerts = list()
 
         self.totalcount = 0
         self.sensorcount = 0
+
+    @property
+    def log(self):
+        return self._log
+
+    @log.setter
+    def log(self, value):
+        self._log = value
+
 
     def add_alert(self, alert):
         """

@@ -13,11 +13,19 @@ import logging
 class GenericAlertClass(object):
 
     def __init__(self):
-        self.logging = False
+        self._log = False
 
-        if self.logging:
+        if self.log:
             logging.warning("DEBUG: Constructor for GenericAlertClass")
 
     # Alert Method will print the data onto the screen
     def Alert(self, alertdata):
         pass
+
+    @property
+    def log(self):
+        return self._log
+
+    @log.setter
+    def log(self, value):
+        self._log = value

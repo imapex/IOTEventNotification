@@ -40,17 +40,18 @@ cfg.read(CONFIG_FILE)
 #zip = cfg.get("wunderground", "zipcode")
 
 #sensor = WeatherUndergroundSensor(key,zip)
-#sensor.logging = True
+#sensor.log = True
 
 
 # This snippet of code will instantiate the Simulated Sensor
 sensor = SimulatedSensor()
-sensor.logging = True
+sensor.log = True
 
 # Define the alerts we want to use
 
 #spark = SparkRoomAlert(cfg)
 screen = PrintAlertClass()
+
 
 # add alerts to sensor
 #sensor.add_alert(spark)

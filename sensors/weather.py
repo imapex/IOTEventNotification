@@ -8,7 +8,6 @@ class WeatherUndergroundSensor(GenericSensorClass):
     def __init__(self, api_key, zip):
 
         self.data = 0
-        self.logging = False
 
         self.zipcode = zip
         self.apikey = api_key
@@ -23,7 +22,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
 
         url = base_url + endpoint
 
-        if self.logging:
+        if self._log:
             logging.warning("URL to request weather: " + url)
 
         r = requests.get(url)
@@ -31,7 +30,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
 
         self.data = json_string['current_observation']['temp_f']
 
-        if self.logging:
+        if self._log:
             logging.warning("Returned weather:" + str(self.data))
 
         return self.data
@@ -46,7 +45,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
         :return: bool result of comparison
         """
 
-        if self.logging:
+        if self._log:
             logging.warning("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:
