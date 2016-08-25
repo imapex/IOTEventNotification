@@ -4,11 +4,11 @@ import requests
 from alerts.base import GenericAlertClass
 
 
-class SparkRoomAlert(GenericAlertClass):
+class TropoAlert(GenericAlertClass):
     """
-    Sends alerts to a Cisco Spark Room
-    """
+    Sends alerts to a SMS Phone number via Tropo
 
+    """
     def __init__(self, cfg):
         """
         Constructor method when the object is initialized
@@ -16,29 +16,30 @@ class SparkRoomAlert(GenericAlertClass):
         :param cfg: Specifies the configuration file that will be used to process the data
         :return: nothing
         """
+
         self.cfg = cfg
-        self.sparkToken = cfg.get("spark", "token")
-        self.roomId = cfg.get("spark", "room_id")
+        self.tropoToken = cfg.get("tropo", "token")
+        self.phoneNumber = cfg.get("tropo", "phonenumber")
 
         # Call the base class initializer
-        super(SparkRoomAlert, self).__init__()
+        super(TropoAlert, self).__init__()
+
 
     def post_message(self, text):
         """
-        post_message - Internal function used to create the REST API Call and send to the Spark API
+        post_message - Internal function used to create the REST API Call and send to the Tropo API
 
         :param text - Message to be posted on the API
         :return message_dict - A Dictionary used to represent the result of the WebAPI Call
         """
-        apistring = "https://api.ciscospark.com/v1/messages"
+        apistring = "https://api.tropo.com/1.0/sessions"
 
         # Set up the Headers based upon the Tropo API
-        headers = {'Authorization': 'Bearer {}'.format(self.sparkToken),
+        headers = {'accept': 'application/json',
                    'content-type': 'application/json'}
 
         # Create the payload value that includes the paramters that we need to pass to the Tropo API
-
-        payload = {'roomId': self.roomId, 'text': text}
+        payload = {'token': self.tropoToken, 'numberToDial': self.phoneNumber, 'alertMessage':text}
 
         if self.log:
             logging.warning("API Call to: " + apistring)

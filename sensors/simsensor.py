@@ -7,22 +7,23 @@ class SimulatedSensor(GenericSensorClass):
     def __init__(self):
 
         self.data = 0
-#        self.logging = False
 
         super(SimulatedSensor, self).__init__()
 
 
     def read(self):
-
+        """
+        read - This method will read data from the sensor
+        :return: nothing
+        """
         # Execute any method in the base class prior to this method
         super(SimulatedSensor,self).read()
 
+        # Generate the Random Number to simulate a sensor
         self.data = random.randint(1, 10)
 
         if self._log:
-            logging.warning("Sensor read number: "+ str(self._totalcount) + " Data returned: "+str(self.data))
-
-
+            logging.warning("Sensor read #"+ str(self._totalcount) + ", Data returned: "+str(self.data))
 
         return
 
