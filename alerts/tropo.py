@@ -19,7 +19,8 @@ class TropoAlert(GenericAlertClass):
 
         self.cfg = cfg
         self.tropoToken = cfg.get("tropo", "token")
-        self.phoneNumber = cfg.get("tropo", "phonenumber")
+        phoneNumberList = cfg.get("tropo", "phonenumber")
+        self.phoneNumber=phoneNumberList.split(",")
 
         # Call the base class initializer
         super(TropoAlert, self).__init__()
@@ -38,23 +39,25 @@ class TropoAlert(GenericAlertClass):
         headers = {'accept': 'application/json',
                    'content-type': 'application/json'}
 
-        # Create the payload value that includes the paramters that we need to pass to the Tropo API
-        payload = {'token': self.tropoToken, 'numberToDial': self.phoneNumber, 'alertMessage':text}
+        for s in self.phoneNumber:
 
-        if self.log:
-            logging.warning("API Call to: " + apistring)
-            logging.warning("   Headers: "+ str(headers))
-            logging.warning("   Payload: "+ str(payload))
+            # Create the payload value that includes the paramters that we need to pass to the Tropo API
+            payload = {'token': self.tropoToken, 'numberToDial': s, 'alertMessage':text}
 
-        # Post the API call to the tropo API using the payload and headers defined above
-        resp = requests.post(apistring,
-                             json=payload, headers=headers)
+            if self.log:
+                logging.warning("API Call to: " + apistring)
+                logging.warning("   Headers: "+ str(headers))
+                logging.warning("   Payload: "+ str(payload))
 
-        message_dict = json.loads(resp.text)
-        message_dict['statuscode'] = str(resp.status_code)
+            # Post the API call to the tropo API using the payload and headers defined above
+            resp = requests.post(apistring,
+                              json=payload, headers=headers)
 
-        if self.log:
-            logging.warning("requests Return Status Code: "+str(resp.status_code))
+            message_dict = json.loads(resp.text)
+            message_dict['statuscode'] = str(resp.status_code)
+
+            if self.log:
+                logging.warning("requests Return Status Code: "+str(resp.status_code))
 
         return message_dict
 
