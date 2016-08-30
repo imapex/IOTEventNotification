@@ -12,6 +12,8 @@ class GenericSensorClass(object):
 
     def __init__(self):
         self.data = 0
+
+        self._comparedata=0
         self._log = False
         self.alerts = list()
 
@@ -25,6 +27,14 @@ class GenericSensorClass(object):
     @log.setter
     def log(self, value):
         self._log = value
+
+    @property
+    def comparedata(self):
+        return self._comparedata
+
+    @comparedata.setter
+    def comparedata(self, value):
+        self._comparedata = int(value)
 
     @property
     def totalcount(self):

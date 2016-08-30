@@ -14,7 +14,11 @@ class WeatherUndergroundSensor(GenericSensorClass):
         super(WeatherUndergroundSensor, self).__init__()
 
     def read(self):
+        """
+        read - Read data from the sensor
 
+        :return: resulting JSON of the data after the call was made
+        """
         # Execute any method in the base class prior to this method
         super(WeatherUndergroundSensor,self).read()
 
@@ -24,15 +28,19 @@ class WeatherUndergroundSensor(GenericSensorClass):
         url = base_url + endpoint
 
         if self._log:
-            logging.warning("URL to request weather: " + url)
+            logging.warning("API Call to: " + url)
 
         r = requests.get(url)
+
         json_string = r.json()
+
+        if self._log:
+            logging.warning("requests Return Status Code: "+str(r.status_code))
 
         self.data = json_string['current_observation']['temp_f']
 
         if self._log:
-            logging.warning("Sensor read number: "+ str(self._totalcount) + " Data returned: "+str(self.data))
+            logging.warning("Sensor read #"+ str(self._totalcount) + " Data returned: "+str(self.data))
 
         return self.data
 

@@ -8,13 +8,20 @@ class PrintAlertClass(GenericAlertClass):
 
     """
     def __init__(self):
+        """
+        Constructor method when the object is initialized
 
+        """
+        # Call the base class initializer
         super(PrintAlertClass, self).__init__()
 
-        if self.log:
-            logging.warning("DEBUG: Constructor for PrintAlertClass")
 
     def trigger(self, alertdata):
-        # Alert Method will print the data onto the screen
+        """
+        trigger - This method will be used to send the message
+
+        :param alertdata: defines the message to be displayed
+        :return: nothing
+        """
 
         print alertdata

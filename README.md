@@ -7,7 +7,7 @@ This application serves as a generic event notification engine for IOT enabled r
 * Sending a Tropo notification anytime an external security trigger is tripped
 
 ##Main Routine
-The IOTeventNotification.py function is the IOTEventRoutine.   Basically, it implements a infinite loop and performs the folowing:
+The core module is in the IOTEventNotification.py.   It implements a infinite loop and performs the folowing:
 
 ```{r}
 Loop forever
@@ -16,18 +16,17 @@ Loop forever
 	If True, alert the user
 	Sleep for a period of time
 ```
-The core module is IOTEventNotification.py
 
-##Details of Generic Functions
-There are two types of classes that are implemented.   They are a GenericAlertClass and a GenericSensorClass.    These classes perform the actual function.
+##Details of Classes
+There are two types of classes that are implemented.   They are a GenericAlertClass and a GenericSensorClass.    These classes represent the base classes to either Alert the users or read data from a sensor.
 
-**GenericAlertClass** - This class implements the generic alerting mechanism.   It provides no function directly, but implements local variables to maintain state.   However, the function of it is to use it as a foundation for other classes by using inheritance.
+**GenericAlertClass** - This class implements the generic alerting mechanism.   It provides no function directly, but implements local variables to maintain state.   However, it's purpose is to use it as a foundation for other classes by using inheritance.
 
 The base clase only implements one method:
 
 * **Alert** - This method displays a string
 
-**GenericSensorClass** - This class implements the generic sensor mechanism.  The default behavior implements a simulated sensor by using a random number generator.   
+**GenericSensorClass** - This class implements the generic sensor mechanism.  It provides no function directly, but implements local vairables to maintain state.   Similar to the GenericAlertClass, it's purpose is to use it as a foundation for other classes my using inheritance.   
 
 * **read** - This class retrieves data from a sensor.   The data returned from the sensor should be stored in the data variable within theclass so that it can be used for other methods
 * **compare(value)** - This class compares the data that was received from the sensor to the value paramter.   It will return a boolean value.
@@ -35,7 +34,8 @@ The base clase only implements one method:
 ##Code modules provided
 
 * **PrintAlertClass** - This AlertClass will print the data to the screen
-* **SparkRoomAlertClass** - This AlertClass will print the data a Cisco Spark Room.   
+* **SparkRoomAlertClass** - This AlertClass will print the data a Cisco Spark Room.  
+* **TropoAlertClass** - This AlertClass will print the data to a tropo API to send data to an SMS address.   NOTE:   This requires configuration within Tropo.   Please refer to the [tropo.md] (tropo.md) document
 * **SimulatedSensor** - This SensorClass will implement a basic sensor simulation using a random number generator.   
 * **WeatherUndergroundSensor** - This SensorClass will receive data from the weather underground API
 
@@ -44,16 +44,55 @@ The base clase only implements one method:
 
 
 ##Example Usage
-To create your own class to inherit from these base classes.   The following example allows you to create your own alerting class
+All functions of the application is controlled by the configuration file.   This file is called: package_config.ini.  It contains sections for each module with the Notification Engine:
 
-```{r}
-import GenericAlertClass
-class MyCustomAlertClass(GenericAlertClass.GenericAlertClass):
-    def __init__(self):
+###Sensors###
+With the sensor configuraitons, you can only have a single sensor.   Therefore, if you enabled multiple sensors, only one will be enabled.
 
-        GenericAlertClass.GenericAlertClass.__init__(self)
-    
-    def Alert(self,alertdata)
-    
-    # Implement Custom Code to Alert the User    
-```
+####SimlulatedSensor####
+Section name: simulatedsensor
+
+Options:
+
+* enabled - Enable this sensor
+* logging - Enable logging of the sensor for debugging mode
+* compare_data - Data to compare the returned sensor data to
+
+#### WeatherUndergroundSensor####
+Section name: wunderground
+
+Options:
+
+* enabled - Enable this sensor
+* logging - Enable logging
+* api_key - api_key from Weather Underground to make the
+* zipcode - Zip Code to get the weather
+* compare_data - Data to compare the returned weather temperature from
+
+
+###Alerts###
+The IOTEventNotification.py provides the cababilities to enable multiple alerts.   Therefore, anytime that the multiple alerts are enabled, it will simultaneously send data to all the enabled sensors at the same time.
+
+####PrintAlertClass####
+Section name: print
+
+* enabled - Enable this alert
+* logging - Enable logging
+
+####SparkRoomAlertClass####
+Section name: spark
+
+* enabled - Enable this alert
+* logging - Enable logging
+* url - This is the url for the Spark API (Normally, this should not be changed)
+* token - This is the spark token that will be used to send the alert
+* room_id - This is the id of the room that the alert should be sent to.
+
+####TropoAlertClass####
+Section name: tropo
+
+* enabled - Enable this alert
+* logging - Enable logging
+* token - This is the tropo token that will be used to send the alert to Tropo
+* phonenumber - This represents a comma deliminated list of phone numbers to be used for sending the alerts.
+

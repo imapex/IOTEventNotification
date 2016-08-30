@@ -7,6 +7,7 @@ from sensors.weather import WeatherUndergroundSensor
 from sensors.simsensor import SimulatedSensor
 from sensors.base import GenericSensorClass
 from ConfigParser import SafeConfigParser
+from alerts.tropo import TropoAlert
 
 """
 MAIN ROUTINE
@@ -19,6 +20,8 @@ to sleep between polling intervals.
 
 #####################################################
 """
+
+print "IOT Event Notification Starting...."
 
 # Get hold of the configuration file (package_config.ini)
 moduledir = os.path.abspath(os.path.dirname(__file__))
@@ -36,28 +39,72 @@ cfg.read(CONFIG_FILE)
 
 # This snippet of code will instantiate the Weather Underground Sensor
 
-#key = cfg.get("wunderground", "api_key")
-#zip = cfg.get("wunderground", "zipcode")
+cancontinue = False
+if (cfg.get("wunderground","enabled") == "True"):
 
-#sensor = WeatherUndergroundSensor(key,zip)
-#sensor.log = True
+    print "Weatherunderground Sensor Enabled..."
+    key = cfg.get("wunderground", "api_key")
+    zip = cfg.get("wunderground", "zipcode")
+    comparedata = cfg.get("wunderground","compare_data")
 
+    sensor = WeatherUndergroundSensor(key,zip)
+    if (cfg.get("wunderground", "logging") == "True"):
+        sensor.log = True
+    sensor.comparedata = comparedata
+    cancontinue = True
+elif (cfg.get("simulatedsensor","enabled") == "True"):
 
-# This snippet of code will instantiate the Simulated Sensor
-sensor = SimulatedSensor()
-sensor.log = True
+    # This snippet of code will instantiate the Simulated Sensor
+    print "Simulated Sensor Enabled..."
+    comparedata = cfg.get("simulatedsensor","compare_data")
+    sensor = SimulatedSensor()
+    if (cfg.get("simulatedsensor", "logging") == "True"):
+        sensor.log = True
+    sensor.comparedata = int(comparedata)
+else:
+    print "ERROR: At least one sensor must be defined. Please enable at least one sensor."
+    exit (-1)
 
 # Define the alerts we want to use
 
-#spark = SparkRoomAlert(cfg)
-screen = PrintAlertClass()
+cancontinue = False
 
+# This code will instantiate the Print Alert Class - Check to see if it is enabled
+if (cfg.get("print","enabled") == "True"):
+    print "Print Alert Enabled for output..."
+    screen = PrintAlertClass()
 
-# add alerts to sensor
-#sensor.add_alert(spark)
-sensor.add_alert(screen)
+    if (cfg.get("print","logging") == "True"):
+        screen.log = True
 
-sensor.send_alerts(time.strftime("%b %d %Y, %H:%M:%S ", time.gmtime()) + "IOTEventNotification starting..." )
+    sensor.add_alert(screen)
+    cancontinue = True
+
+# This code will instantiate the Tropo Alert Class - Check to see if it is enabled
+if (cfg.get("tropo","enabled") == "True"):
+    print "Tropo Alert Enabled for output..."
+    tropo = TropoAlert(cfg)
+
+    if (cfg.get("tropo","logging") == "True"):
+        tropo.log = True
+
+    sensor.add_alert(tropo)
+    cancontinue = True
+
+# This code will instantiate the Tropo Alert Class - Check to see if it is enabled
+if (cfg.get("spark","enabled") == "True"):
+    print "Spark Alert Enabled for output..."
+    spark = SparkRoomAlert(cfg)
+
+    if (cfg.get("spark","logging") == "True"):
+        spark.log = True
+
+    sensor.add_alert(spark)
+    cancontinue = True
+
+if not cancontinue:
+    print "ERROR: No alerts are enabled.   Please enable at least one alert."
+    exit(-1)
 
 # Let's loop forever
 while True:
@@ -71,14 +118,15 @@ while True:
     Let's compare the data that was retrieved with the
     value to determine the appropriate action
     """
-    if sensor.compare(5):
+
+    if sensor.compare(sensor.comparedata):
 
         sensor.send_alerts(currentdate + "ALERT: A new car just appeared at "
                                          "the drive up bank location.   "
                                          "Please Service ASAP!!! " + " (Sensor Hits/Sensor Reads)  ("+
                                           str(sensor.sensorcount)+"/"+ str(sensor.totalcount)+")")
     else:
-        sensor.send_alerts(currentdate+"Drive up is currently empty")
+        sensor.send_alerts(currentdate + "Drive up is currently empty")
 
     # Sleep for an appropriate time
     time.sleep(10)
