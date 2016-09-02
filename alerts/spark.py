@@ -1,5 +1,5 @@
 import json
-import logging
+from log_conf import LoggerManager
 import requests
 from alerts.base import GenericAlertClass
 
@@ -41,9 +41,9 @@ class SparkRoomAlert(GenericAlertClass):
         payload = {'roomId': self.roomId, 'text': text}
 
         if self.log:
-            logging.warning("API Call to: " + apistring)
-            logging.warning("   Headers: "+ str(headers))
-            logging.warning("   Payload: "+ str(payload))
+            LoggerManager.logger.debug("API Call to: " + apistring)
+            LoggerManager.logger.debug("   Headers: "+ str(headers))
+            LoggerManager.logger.debug("   Payload: "+ str(payload))
 
         # Post the API call to the tropo API using the payload and headers defined above
         resp = requests.post(apistring,
@@ -53,7 +53,7 @@ class SparkRoomAlert(GenericAlertClass):
         message_dict['statuscode'] = str(resp.status_code)
 
         if self.log:
-            logging.warning("requests Return Status Code: "+str(resp.status_code))
+            LoggerManager.logger.debug("requests Return Status Code: "+str(resp.status_code))
 
         return message_dict
 

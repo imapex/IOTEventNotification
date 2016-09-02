@@ -1,14 +1,15 @@
 import random
-import logging
+from log_conf import LoggerManager
 from sensors.base import GenericSensorClass
 
 class SimulatedSensor(GenericSensorClass):
 
     def __init__(self):
 
+        super(SimulatedSensor, self).__init__()
+
         self.data = 0
 
-        super(SimulatedSensor, self).__init__()
 
 
     def read(self):
@@ -23,7 +24,7 @@ class SimulatedSensor(GenericSensorClass):
         self.data = random.randint(1, 10)
 
         if self._log:
-            logging.warning("Sensor read #"+ str(self._totalcount) + ", Data returned: "+str(self.data))
+           LoggerManager.logger.debug("Sensor read #"+ str(self._totalcount) + ", Data returned: "+str(self.data))
 
         return
 
@@ -38,7 +39,7 @@ class SimulatedSensor(GenericSensorClass):
         """
 
         if self._log:
-            logging.warning("Comparing {} with {}".format(self.data, value))
+            LoggerManager.logger.debug("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:
             self._sensorcount += 1

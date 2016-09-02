@@ -5,16 +5,13 @@
 #
 # This generic alert class must be used as the base class to inherit from
 #
-import logging
+
 
 
 class GenericAlertClass(object):
 
     def __init__(self):
         self._log = False
-
-        if self.log:
-            logging.warning("DEBUG: Constructor for GenericAlertClass")
 
     # Alert Method will print the data onto the screen
     def Alert(self, alertdata):

@@ -15,6 +15,7 @@ class GenericSensorClass(object):
 
         self._comparedata=0
         self._log = False
+        self.logger = None
         self.alerts = list()
 
         self._totalcount = 0

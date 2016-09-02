@@ -1,6 +1,8 @@
 #!/usr/bin python
 import os
 import time
+#import logging
+#import logging.handlers
 from alerts.spark import SparkRoomAlert
 from alerts.local import PrintAlertClass
 from sensors.weather import WeatherUndergroundSensor
@@ -8,6 +10,7 @@ from sensors.simsensor import SimulatedSensor
 from sensors.base import GenericSensorClass
 from ConfigParser import SafeConfigParser
 from alerts.tropo import TropoAlert
+from log_conf import LoggerManager
 
 """
 MAIN ROUTINE
@@ -21,7 +24,8 @@ to sleep between polling intervals.
 #####################################################
 """
 
-print "IOT Event Notification Starting...."
+LoggerManager.logger.info("IOT Event Notification Starting....")
+
 
 # Get hold of the configuration file (package_config.ini)
 moduledir = os.path.abspath(os.path.dirname(__file__))
@@ -42,7 +46,7 @@ cfg.read(CONFIG_FILE)
 cancontinue = False
 if (cfg.get("wunderground","enabled") == "True"):
 
-    print "Weatherunderground Sensor Enabled..."
+    LoggerManager.logger.info("Weatherunderground Sensor Enabled...")
     key = cfg.get("wunderground", "api_key")
     zip = cfg.get("wunderground", "zipcode")
     comparedata = cfg.get("wunderground","compare_data")
@@ -55,14 +59,14 @@ if (cfg.get("wunderground","enabled") == "True"):
 elif (cfg.get("simulatedsensor","enabled") == "True"):
 
     # This snippet of code will instantiate the Simulated Sensor
-    print "Simulated Sensor Enabled..."
+    LoggerManager.logger.info("Simulated Sensor Enabled...")
     comparedata = cfg.get("simulatedsensor","compare_data")
     sensor = SimulatedSensor()
     if (cfg.get("simulatedsensor", "logging") == "True"):
         sensor.log = True
     sensor.comparedata = int(comparedata)
 else:
-    print "ERROR: At least one sensor must be defined. Please enable at least one sensor."
+    LoggerManager.logger.error("ERROR: At least one sensor must be defined. Please enable at least one sensor.")
     exit (-1)
 
 # Define the alerts we want to use
@@ -71,7 +75,7 @@ cancontinue = False
 
 # This code will instantiate the Print Alert Class - Check to see if it is enabled
 if (cfg.get("print","enabled") == "True"):
-    print "Print Alert Enabled for output..."
+    LoggerManager.logger.info("Print Alert Enabled for output...")
     screen = PrintAlertClass()
 
     if (cfg.get("print","logging") == "True"):
@@ -82,7 +86,7 @@ if (cfg.get("print","enabled") == "True"):
 
 # This code will instantiate the Tropo Alert Class - Check to see if it is enabled
 if (cfg.get("tropo","enabled") == "True"):
-    print "Tropo Alert Enabled for output..."
+    LoggerManager.logger.info("Tropo Alert Enabled for output...")
     tropo = TropoAlert(cfg)
 
     if (cfg.get("tropo","logging") == "True"):
@@ -93,7 +97,7 @@ if (cfg.get("tropo","enabled") == "True"):
 
 # This code will instantiate the Tropo Alert Class - Check to see if it is enabled
 if (cfg.get("spark","enabled") == "True"):
-    print "Spark Alert Enabled for output..."
+    LoggerManager.logger.info("Spark Alert Enabled for output...")
     spark = SparkRoomAlert(cfg)
 
     if (cfg.get("spark","logging") == "True"):
@@ -103,7 +107,7 @@ if (cfg.get("spark","enabled") == "True"):
     cancontinue = True
 
 if not cancontinue:
-    print "ERROR: No alerts are enabled.   Please enable at least one alert."
+    LoggerManager.logger.error("ERROR: No alerts are enabled.   Please enable at least one alert.")
     exit(-1)
 
 # Let's loop forever

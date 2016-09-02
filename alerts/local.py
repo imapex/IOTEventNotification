@@ -1,4 +1,3 @@
-import logging
 from alerts.base import GenericAlertClass
 
 

@@ -1,4 +1,4 @@
-import logging
+from log_conf import LoggerManager
 import requests
 from sensors.base import GenericSensorClass
 
@@ -28,19 +28,19 @@ class WeatherUndergroundSensor(GenericSensorClass):
         url = base_url + endpoint
 
         if self._log:
-            logging.warning("API Call to: " + url)
+            LoggerManager.logger.debug("API Call to: " + url)
 
         r = requests.get(url)
 
         json_string = r.json()
 
         if self._log:
-            logging.warning("requests Return Status Code: "+str(r.status_code))
+            LoggerManager.logger.debug("requests Return Status Code: "+str(r.status_code))
 
         self.data = json_string['current_observation']['temp_f']
 
         if self._log:
-            logging.warning("Sensor read #"+ str(self._totalcount) + " Data returned: "+str(self.data))
+            LoggerManager.logger.debug("Sensor read #"+ str(self._totalcount) + " Data returned: "+str(self.data))
 
         return self.data
 
@@ -55,7 +55,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
         """
 
         if self._log:
-            logging.warning("Comparing {} with {}".format(self.data, value))
+            LoggerManager.logger.debug("Comparing {} with {}".format(self.data, value))
 
         if self.data < value:
             self._sensorcount += 1
