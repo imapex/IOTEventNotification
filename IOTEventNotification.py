@@ -39,10 +39,21 @@ CONFIG_FILE = os.getenv("CAF_APP_CONFIG_FILE", tcfg)
 cfg = SafeConfigParser()
 cfg.read(CONFIG_FILE)
 
+# Read the application specific paramters
+
+success_string = cfg.get("application","success_string")
+failure_string = cfg.get("application","failure_string")
+delay_time = float(cfg.get("application","delay"))
+
+LoggerManager.logger.info("Configuration Paramters:")
+LoggerManager.logger.info("Delay Time: " + str(delay_time)+" secs.")
+LoggerManager.logger.info("Success Message \""+success_string+"\"")
+LoggerManager.logger.info("Failure Message \""+failure_string+"\"")
+
+
 # define the sensor object that will be used to retrieve data from the sensor
 
 # This snippet of code will instantiate the Weather Underground Sensor
-
 cancontinue = False
 if (cfg.get("wunderground","enabled") == "True"):
 
@@ -125,12 +136,10 @@ while True:
 
     if sensor.compare(sensor.comparedata):
 
-        sensor.send_alerts(currentdate + "ALERT: A new car just appeared at "
-                                         "the drive up bank location.   "
-                                         "Please Service ASAP!!! " + " (Sensor Hits/Sensor Reads)  ("+
+        sensor.send_alerts(currentdate + success_string + " (Sensor Hits/Sensor Reads)  ("+
                                           str(sensor.sensorcount)+"/"+ str(sensor.totalcount)+")")
     else:
-        sensor.send_alerts(currentdate + "Drive up is currently empty")
+        sensor.send_alerts(currentdate + failure_string)
 
     # Sleep for an appropriate time
-    time.sleep(10)
+    time.sleep(delay_time)

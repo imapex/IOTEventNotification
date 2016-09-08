@@ -1,3 +1,8 @@
+[application]
+delay: 10
+success_string: POSITIVE: A postive sensor compare just occurred.
+failure_string: NEGATIVE: A negative sensor compare just occurred.
+
 [print]
 enabled: True
 logging: True
@@ -16,16 +21,16 @@ token: <<Enter Spark Token>>
 room_id: <<Enter Room ID>
 
 [wunderground]
+enabled: False
+logging: True
 api_key: <<Enter WeatherUnderground API Token>>
 zipcode: 16066
 compare_data: 95
-logging: True
-enabled: False
 
 [simulatedsensor]
-compare_data: 5
-logging: False
 enabled: True
+logging: False
+compare_data: 5
 
 [logging]
 # DEBUG:10, INFO: 20, WARNING: 30, ERROR: 40, CRITICAL: 50, NOTSET: 0
