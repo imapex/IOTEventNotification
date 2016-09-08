@@ -46,8 +46,17 @@ The base clase only implements one method:
 ##Example Usage
 All functions of the application is controlled by the configuration file.   This file is called: package_config.ini.  It contains sections for each module with the Notification Engine:
 
+###General Appllication###
+In the general application section, we define the paramters for the overall application.
+
+Section Name: application
+
+* delay - The delay time between each reads of the sensor
+* success_string - String to be displayed when the sensor read was successful (result of the sensor read **did** meet the pattern)
+* failure_string - String to be displayed when the sensor read was not successful (result of the sensor read **did not** meet the pattern)
+
 ###Sensors###
-With the sensor configuraitons, you can only have a single sensor.   Therefore, if you enabled multiple sensors, only one will be enabled.
+With the sensor configurations, you can only have a single sensor.   Therefore, if you enabled multiple sensors, only one will be enabled.
 
 ####SimlulatedSensor####
 Section name: simulatedsensor
