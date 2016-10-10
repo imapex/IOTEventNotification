@@ -78,7 +78,7 @@ class GenericSensorClass(object):
 
         pass
 
-    def compare(self, value):
+    def compare(self, value, op_type):
         # will be overridden by child
         pass
 

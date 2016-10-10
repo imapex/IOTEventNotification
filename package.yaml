@@ -1,11 +1,11 @@
 descriptor-schema-version: 2.0
  
 info:
-  name: "TellerEye"
-  description: "Notify Teller of drive-thru customer"
+  name: "IOTEventNotification"
+  description: "Notification Engine for events"
   version: "1.0"
-  author-link: "http://www.cisco.com"
-  author-name: "Cisco Systems"
+  author-link: "https://github.com/imapex/IOTEventNotification"
+  author-name: "Chris Bogdon cbogdon@cisco.com"
  
 app:
   type: paas

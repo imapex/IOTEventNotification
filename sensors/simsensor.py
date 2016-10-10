@@ -1,5 +1,6 @@
 import random
 from log_conf import LoggerManager
+import operator
 from sensors.base import GenericSensorClass
 
 class SimulatedSensor(GenericSensorClass):
@@ -28,20 +29,26 @@ class SimulatedSensor(GenericSensorClass):
 
         return
 
-    def compare(self, value):
+    def compare(self, value, op_type):
         """
         This method will compare the retrieved sensor data with the value.
         If the value is less that data then this data returns true otherwise
         will be false.
 
         :param value: int value to compare against
+               op_type: type of operator used to compare the values
         :return: bool result of comparison
         """
+        ops = {'>': operator.gt,
+               '<': operator.lt,
+               '>=': operator.ge,
+               '<=': operator.le,
+               '=': operator.eq}
 
         if self._log:
-            LoggerManager.logger.debug("Comparing {} with {}".format(self.data, value))
+            LoggerManager.logger.debug("Comparing {} with {} using operator '{}'".format(self.data, value, op_type))
 
-        if self.data < value:
+        if ops[op_type](self.data,value) :
             self._sensorcount += 1
             return True
         else:

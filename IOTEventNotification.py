@@ -6,6 +6,7 @@ import time
 from alerts.spark import SparkRoomAlert
 from alerts.local import PrintAlertClass
 from sensors.weather import WeatherUndergroundSensor
+from sensors.airquality import BreezeometerAQISensor
 from sensors.simsensor import SimulatedSensor
 from sensors.base import GenericSensorClass
 from ConfigParser import SafeConfigParser
@@ -23,6 +24,12 @@ to sleep between polling intervals.
 
 #####################################################
 """
+
+LOGDIR = os.getenv("CAF_APP_LOG_DIR")
+
+LoggerManager.SetPath(LOGDIR)
+LoggerManager.InitializeLogger()
+
 
 LoggerManager.logger.info("IOT Event Notification Starting....")
 
@@ -44,17 +51,23 @@ cfg.read(CONFIG_FILE)
 success_string = cfg.get("application","success_string")
 failure_string = cfg.get("application","failure_string")
 delay_time = float(cfg.get("application","delay"))
+ops = cfg.get("application", "operator")
+
+# Set the Log Level
+log_level = int(cfg.get("application","log_level"))
+LoggerManager.logger.setLevel(log_level)
 
 LoggerManager.logger.info("Configuration Paramters:")
 LoggerManager.logger.info("Delay Time: " + str(delay_time)+" secs.")
 LoggerManager.logger.info("Success Message \""+success_string+"\"")
 LoggerManager.logger.info("Failure Message \""+failure_string+"\"")
+LoggerManager.logger.info("Operator for Comparison: '"+ ops + "'")
 
 
 # define the sensor object that will be used to retrieve data from the sensor
 
 # This snippet of code will instantiate the Weather Underground Sensor
-cancontinue = False
+
 if (cfg.get("wunderground","enabled") == "True"):
 
     LoggerManager.logger.info("Weatherunderground Sensor Enabled...")
@@ -66,7 +79,7 @@ if (cfg.get("wunderground","enabled") == "True"):
     if (cfg.get("wunderground", "logging") == "True"):
         sensor.log = True
     sensor.comparedata = comparedata
-    cancontinue = True
+
 elif (cfg.get("simulatedsensor","enabled") == "True"):
 
     # This snippet of code will instantiate the Simulated Sensor
@@ -76,6 +89,23 @@ elif (cfg.get("simulatedsensor","enabled") == "True"):
     if (cfg.get("simulatedsensor", "logging") == "True"):
         sensor.log = True
     sensor.comparedata = int(comparedata)
+
+elif (cfg.get("breezometeraqi","enabled") == "True"):
+
+    # This snippet of code will instantiate the BreezometerAQL Sensor
+    LoggerManager.logger.info("Breezometer AQI Sensor Enabled...")
+    comparedata = cfg.get("breezometeraqi","compare_data")
+
+    key = cfg.get("breezometeraqi", "api_key")
+    lat = cfg.get("breezometeraqi", "lat")
+    long = cfg.get("breezometeraqi", "long")
+
+    sensor = BreezeometerAQISensor(key,lat,long)
+    if (cfg.get("breezometeraqi", "logging") == "True"):
+        sensor.log = True
+
+    sensor.comparedata = int(comparedata)
+
 else:
     LoggerManager.logger.error("ERROR: At least one sensor must be defined. Please enable at least one sensor.")
     exit (-1)
@@ -134,7 +164,7 @@ while True:
     value to determine the appropriate action
     """
 
-    if sensor.compare(sensor.comparedata):
+    if sensor.compare(sensor.comparedata,ops):
 
         sensor.send_alerts(currentdate + success_string + " (Sensor Hits/Sensor Reads)  ("+
                                           str(sensor.sensorcount)+"/"+ str(sensor.totalcount)+")")

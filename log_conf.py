@@ -27,16 +27,24 @@ class LoggerManager():
     """
     This Logger Manager Class is really only an init class to set up logging
     """
+
+    pathname=None
+
     def __init__(self):
 
         # Setup logging mechanisms for both a log file and the screen.
+
+        self.pathname = ""
+
+
+    def InitializeLogger(self):
 
         self.logger = logging.getLogger("IOTEventNotification")
         self.logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(module)s/%(funcName)s - %(levelname)s - %(message)s')
         # Start with a Rotating File Handler
 
-        fh = logging.handlers.RotatingFileHandler("IOTEventNotification.log", maxBytes=50000, backupCount=3)
+        fh = logging.handlers.RotatingFileHandler(self.pathname+"IOTEventNotification.log", maxBytes=50000, backupCount=3)
         fh.setFormatter(formatter)
 
         # Set up a screen handler as well.
@@ -47,3 +55,11 @@ class LoggerManager():
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
+
+    def SetPath(self,newpath):
+
+
+        if newpath == None :
+            self.pathname=""
+        else:
+            self.pathname = newpath
