@@ -1,14 +1,16 @@
 import random
-import logging
+from log_conf import LoggerManager
+import operator
 from sensors.base import GenericSensorClass
 
 class SimulatedSensor(GenericSensorClass):
 
     def __init__(self):
 
+        super(SimulatedSensor, self).__init__()
+
         self.data = 0
 
-        super(SimulatedSensor, self).__init__()
 
 
     def read(self):
@@ -23,24 +25,30 @@ class SimulatedSensor(GenericSensorClass):
         self.data = random.randint(1, 10)
 
         if self._log:
-            logging.warning("Sensor read #"+ str(self._totalcount) + ", Data returned: "+str(self.data))
+           LoggerManager.logger.debug("Sensor read #"+ str(self._totalcount) + ", Data returned: "+str(self.data))
 
         return
 
-    def compare(self, value):
+    def compare(self, value, op_type):
         """
         This method will compare the retrieved sensor data with the value.
         If the value is less that data then this data returns true otherwise
         will be false.
 
         :param value: int value to compare against
+               op_type: type of operator used to compare the values
         :return: bool result of comparison
         """
+        ops = {'>': operator.gt,
+               '<': operator.lt,
+               '>=': operator.ge,
+               '<=': operator.le,
+               '=': operator.eq}
 
         if self._log:
-            logging.warning("Comparing {} with {}".format(self.data, value))
+            LoggerManager.logger.debug("Comparing {} with {} using operator '{}'".format(self.data, value, op_type))
 
-        if self.data < value:
+        if ops[op_type](self.data,value) :
             self._sensorcount += 1
             return True
         else:

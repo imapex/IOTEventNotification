@@ -6,93 +6,67 @@ This application serves as a generic event notification engine for IOT enabled r
 * Sending a Spark alert anytime an external temperature sensor hits a certain threshold
 * Sending a Tropo notification anytime an external security trigger is tripped
 
-##Main Routine
-The core module is in the IOTEventNotification.py.   It implements a infinite loop and performs the folowing:
+For more detailed information on the technical details behind the modules, please see [developer.md] (developer.md).    
 
-```{r}
-Loop forever
-	Get Data from the Sensor 
-	Compare Data Received from the Sensor to a value
-	If True, alert the user
-	Sleep for a period of time
+
+##Quick Start
+To quickly get started with this module, let's configure the application to automatically generate a Spark Notification anytime the weather falls below 50 degrees for zip code 16066.
+
+#####Determine the Spark Room ID to send the alert to#####
+
+1. Go to https://developer.ciscospark.com/# and click on the "Log In Button"
+2. Log in using your Spark Credentials
+3. Click on the Get Started Button
+4. Click on the "Rooms" Link under the "API Reference" on the left side
+5. Click on the List Rooms API
+6. Click on "Test Mode" to enable Test Mode
+7. Click on the Run Button
+8. On the Right Hand Side, you will see JSON off all the rooms that you are a member with, Pick one of the rooms and copy the value of "id" for the room that you want to send notifications
+
+#####Determine your Spark Token#####
+1. Go to https://developer.ciscospark.com/# and click on the "Log In Button"
+2. Log in using your Spark Credentials
+3. Click on your picture in the top right hand corner
+4. Your Spark Token will be displayed
+5. You can Select Copy to copy that Spark ID
+
+#####Register For a Weather Underground#####
+1. Go to https://www.wunderground.com/weather/api/
+2. Click on Pricing and select the free plan and click on the "Purchase Key" button
+3. Once you have created an account, you can log in and click on "Key Settings"
+4. Under the field "Key ID", you will find your Weather Underground API Key.
+
+#####Register For a Breezometer API#####
+1. Go to https://developers.breezometer.com/signup
+2. Enter your information and then click on "Get Started!"
+3. Once you have created an account, you can login and find your Breezometer API Key
+4. NOTE:   This API Key is rate limited to only a few calls a day.   Therefore, you will need to limit the amount of calls you do or they will ask you to pay for the full API
+
+
+#####Setup Application#####
+1. Download all the files from the github repository to your computer
+2. Copy the package_config.ini.sample to package_config.ini
+3. Edit the "package_config.ini" file using your favorite editor
+4. Under the application section, set the log\_level to be 10 for debug purposes
+5. Under the application section, set the delay value to 20.   This represents that we will check the sensor every 10 seconds
+6. Under the application section, set the operator value to be <.   This represents that we want to check to see if the sensor is less than a appropriate value.
+7. Under the print section, set enabled to True.   This will display that data to the screen.
+8. Under the spark section, set enabled to True.   This will active the spark alerting mechanism.
+9. Under the spark section, set the token to be the token value that you obtained from the developer.ciscospark.com website
+10. Under the spark section, set the room\_id to match the spark room ID that you obtained from the developer.ciscospark.com website to represent the room that you will be writing alerts to.
+11. Under the wunderground section, set enabled to True
+12. Under the wunderground section, set api\_key to match the api key that you created on the Weather Underground Website
+13. Under the wunderground section, set zipcode to be 16066 (Or any zip code that you want to find the weather for.
+14. Under the wunderground section, set compare\_date to 50.
+15. Run the application by using the following:
+
 ```
+python IOTEventNotification.py
+``` 
 
-##Details of Classes
-There are two types of classes that are implemented.   They are a GenericAlertClass and a GenericSensorClass.    These classes represent the base classes to either Alert the users or read data from a sensor.
-
-**GenericAlertClass** - This class implements the generic alerting mechanism.   It provides no function directly, but implements local variables to maintain state.   However, it's purpose is to use it as a foundation for other classes by using inheritance.
-
-The base clase only implements one method:
-
-* **Alert** - This method displays a string
-
-**GenericSensorClass** - This class implements the generic sensor mechanism.  It provides no function directly, but implements local vairables to maintain state.   Similar to the GenericAlertClass, it's purpose is to use it as a foundation for other classes my using inheritance.   
-
-* **read** - This class retrieves data from a sensor.   The data returned from the sensor should be stored in the data variable within theclass so that it can be used for other methods
-* **compare(value)** - This class compares the data that was received from the sensor to the value paramter.   It will return a boolean value.
-
-##Code modules provided
-
-* **PrintAlertClass** - This AlertClass will print the data to the screen
-* **SparkRoomAlertClass** - This AlertClass will print the data a Cisco Spark Room.  
-* **TropoAlertClass** - This AlertClass will print the data to a tropo API to send data to an SMS address.   NOTE:   This requires configuration within Tropo.   Please refer to the [tropo.md] (tropo.md) document
-* **SimulatedSensor** - This SensorClass will implement a basic sensor simulation using a random number generator.   
-* **WeatherUndergroundSensor** - This SensorClass will receive data from the weather underground API
+If everthing worked out correctly you should now see the application starting up and get data from the sensors, compare the data and then display the message.
 
 
 
 
-
-##Example Usage
-All functions of the application is controlled by the configuration file.   This file is called: package_config.ini.  It contains sections for each module with the Notification Engine:
-
-###Sensors###
-With the sensor configuraitons, you can only have a single sensor.   Therefore, if you enabled multiple sensors, only one will be enabled.
-
-####SimlulatedSensor####
-Section name: simulatedsensor
-
-Options:
-
-* enabled - Enable this sensor
-* logging - Enable logging of the sensor for debugging mode
-* compare_data - Data to compare the returned sensor data to
-
-#### WeatherUndergroundSensor####
-Section name: wunderground
-
-Options:
-
-* enabled - Enable this sensor
-* logging - Enable logging
-* api_key - api_key from Weather Underground to make the
-* zipcode - Zip Code to get the weather
-* compare_data - Data to compare the returned weather temperature from
-
-
-###Alerts###
-The IOTEventNotification.py provides the cababilities to enable multiple alerts.   Therefore, anytime that the multiple alerts are enabled, it will simultaneously send data to all the enabled sensors at the same time.
-
-####PrintAlertClass####
-Section name: print
-
-* enabled - Enable this alert
-* logging - Enable logging
-
-####SparkRoomAlertClass####
-Section name: spark
-
-* enabled - Enable this alert
-* logging - Enable logging
-* url - This is the url for the Spark API (Normally, this should not be changed)
-* token - This is the spark token that will be used to send the alert
-* room_id - This is the id of the room that the alert should be sent to.
-
-####TropoAlertClass####
-Section name: tropo
-
-* enabled - Enable this alert
-* logging - Enable logging
-* token - This is the tropo token that will be used to send the alert to Tropo
-* phonenumber - This represents a comma deliminated list of phone numbers to be used for sending the alerts.
 

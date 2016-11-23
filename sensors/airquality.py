@@ -3,16 +3,19 @@ import requests
 import operator
 from sensors.base import GenericSensorClass
 
+# This module implements an Air Quality Sensor based upon the API located at:
+# http://breezometer.com/api/
 
-class WeatherUndergroundSensor(GenericSensorClass):
+class BreezeometerAQISensor(GenericSensorClass):
 
-    def __init__(self, api_key, zip):
+    def __init__(self, api_key, lat, long):
 
         self.data = 0
 
-        self.zipcode = zip
+        self.lat = lat
+        self.long = long
         self.apikey = api_key
-        super(WeatherUndergroundSensor, self).__init__()
+        super(BreezeometerAQISensor, self).__init__()
 
     def read(self):
         """
@@ -21,12 +24,14 @@ class WeatherUndergroundSensor(GenericSensorClass):
         :return: resulting JSON of the data after the call was made
         """
         # Execute any method in the base class prior to this method
-        super(WeatherUndergroundSensor,self).read()
+        super(BreezeometerAQISensor,self).read()
 
-        base_url = "http://api.wunderground.com:80/api/{}".format(self.apikey)
-        endpoint = "/conditions/q/{}.json".format(self.zipcode)
+        base_url = "http://api.breezometer.com/baqi/"
 
-        url = base_url + endpoint
+        location = "?lat="+str(self.lat)+"&lon="+str(self.long)
+        endpoint = "&key="+str(self.apikey)
+
+        url = base_url + location + endpoint
 
         if self._log:
             LoggerManager.logger.debug("API Call to: " + url)
@@ -38,7 +43,8 @@ class WeatherUndergroundSensor(GenericSensorClass):
         if self._log:
             LoggerManager.logger.debug("requests Return Status Code: "+str(r.status_code))
 
-        self.data = json_string['current_observation']['temp_f']
+
+        self.data = json_string['breezometer_aqi']
 
         if self._log:
             LoggerManager.logger.debug("Sensor read #"+ str(self._totalcount) + " Data returned: "+str(self.data))
@@ -55,7 +61,6 @@ class WeatherUndergroundSensor(GenericSensorClass):
                op_type: type of operator used to compare the values
         :return: bool result of comparison
         """
-
         ops = {'>': operator.gt,
                '<': operator.lt,
                '>=': operator.ge,
@@ -66,6 +71,7 @@ class WeatherUndergroundSensor(GenericSensorClass):
             LoggerManager.logger.debug("Comparing {} with {} using operator '{}'".format(self.data, value, op_type))
 
         if ops[op_type](self.data,value) :
+
             self._sensorcount += 1
             return True
         else:
