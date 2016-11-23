@@ -36,6 +36,13 @@ To quickly get started with this module, let's configure the application to auto
 3. Once you have created an account, you can log in and click on "Key Settings"
 4. Under the field "Key ID", you will find your Weather Underground API Key.
 
+#####Register For a Breezometer API#####
+1. Go to https://developers.breezometer.com/signup
+2. Enter your information and then click on "Get Started!"
+3. Once you have created an account, you can login and find your Breezometer API Key
+4. NOTE:   This API Key is rate limited to only a few calls a day.   Therefore, you will need to limit the amount of calls you do or they will ask you to pay for the full API
+
+
 #####Setup Application#####
 1. Download all the files from the github repository to your computer
 2. Copy the package_config.ini.sample to package_config.ini
